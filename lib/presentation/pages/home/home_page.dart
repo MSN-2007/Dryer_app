@@ -264,135 +264,38 @@ class _HomePageState extends State<HomePage> {
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Column 1: Circle Progress ring
-              SizedBox(
-                width: 64,
-                height: 64,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: CircularProgressIndicator(
-                        value: isRunning ? progress : 0.0,
-                        strokeWidth: 6,
-                        color: statusColor,
-                        backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                      ),
-                    ),
-                    Text(
-                      isRunning ? '${(progress * 100).toStringAsFixed(0)}%' : 'Idle',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-
-              // Column 2: Device details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      device.name,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      isRunning ? (device.currentProduct ?? 'Processing') : 'No Active Cycle',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    if (isRunning) ...[
-                      Row(
-                        children: [
-                          Text(
-                            'Remaining',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            remainingStr,
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      // Small indicator bar under the text
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: SizedBox(
-                          width: 80,
-                          height: 4,
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            color: statusColor,
-                            backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Column 3: Telemetry readings & Status badge
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              // Header Row: Dryer name / product & Status badge
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Temperature
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Temp: ',
+                        device.name,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isRunning ? (device.currentProduct ?? 'Processing') : 'No Active Cycle',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                           color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                         ),
                       ),
-                      Text(
-                        device.isOnline ? '${device.temp.toStringAsFixed(0)}°C' : '--',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                      ),
                     ],
                   ),
-                  const SizedBox(height: 2),
-                  // Humidity
-                  Row(
-                    children: [
-                      Text(
-                        'Humidity: ',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                      Text(
-                        device.isOnline ? '${device.humidity.toStringAsFixed(0)}%' : '--',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Pill status badge
+                  // Status Badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
+                      color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: statusColor.withOpacity(0.4), width: 1),
+                      border: Border.all(color: statusColor.withValues(alpha: 0.4), width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -409,6 +312,127 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Metrics Row: Circular progress on left, Remaining info in center, Temp/Humidity on right
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 1. Circular Progress ring
+                  SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 48,
+                          height: 48,
+                          child: CircularProgressIndicator(
+                            value: isRunning ? progress : 0.0,
+                            strokeWidth: 5,
+                            color: statusColor,
+                            backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                          ),
+                        ),
+                        Text(
+                          isRunning ? '${(progress * 100).toStringAsFixed(0)}%' : 'Idle',
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // 2. Remaining Time text & mini bar indicator
+                  if (isRunning)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Remaining ',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                            Text(
+                              remainingStr,
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        // Small indicator bar under the text
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: SizedBox(
+                            width: 80,
+                            height: 4,
+                            child: LinearProgressIndicator(
+                              value: progress,
+                              color: statusColor,
+                              backgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      'Ready to dry',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      ),
+                    ),
+
+                  const Spacer(),
+
+                  // 3. Telemetry values (Temp & Humidity)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Temperature
+                      Row(
+                        children: [
+                          Text(
+                            'Temp: ',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                            ),
+                          ),
+                          Text(
+                            device.isOnline ? '${device.temp.toStringAsFixed(0)}°C' : '--',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      // Humidity
+                      Row(
+                        children: [
+                          Text(
+                            'Humidity: ',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                            ),
+                          ),
+                          Text(
+                            device.isOnline ? '${device.humidity.toStringAsFixed(0)}%' : '--',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),

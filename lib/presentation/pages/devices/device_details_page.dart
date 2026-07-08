@@ -436,44 +436,53 @@ class DeviceDetailsPage extends StatelessWidget {
     required bool isNormal,
   }) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-            ),
-            const SizedBox(height: 2),
-            Row(
-              children: [
-                const Text('Target: ', style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight)),
-                Text(targetValue, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ],
+        // Column 1: Parameter Label
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
         ),
-        Row(
-          children: [
-            Text(
-              liveValue,
-              style: TextStyle(
-                fontSize: 15, 
-                fontWeight: FontWeight.bold,
-                color: isNormal ? null : AppColors.warning,
-              ),
+        
+        // Column 2: Live Value
+        SizedBox(
+          width: 50,
+          child: Text(
+            liveValue,
+            style: TextStyle(
+              fontSize: 14, 
+              fontWeight: FontWeight.bold,
+              color: isNormal ? null : AppColors.warning,
             ),
-            const SizedBox(width: 8),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isNormal ? AppColors.normal : AppColors.warning,
-              ),
-            )
-          ],
+            textAlign: TextAlign.left,
+          ),
+        ),
+        const SizedBox(width: 16),
+
+        // Column 3: Target Value Bounds
+        SizedBox(
+          width: 80,
+          child: Text(
+            targetValue,
+            style: const TextStyle(
+              fontSize: 12, 
+              color: AppColors.textSecondaryLight,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+        const SizedBox(width: 8),
+
+        // Column 4: Green Check dot status
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isNormal ? AppColors.normal : AppColors.warning,
+          ),
         ),
       ],
     );
